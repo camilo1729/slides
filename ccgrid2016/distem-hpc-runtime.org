@@ -1,6 +1,6 @@
 
 #+TITLE: Distem: Evaluation of Fault Tolerance and Load Balancing Strategies in HPC Runtimes through Emulation
-#+AUTHOR: Cristian Ruiz, Emmanuel Jeanvoine and Lucas Nussbaum\newline INRIA - France
+#+AUTHOR: Cristian Ruiz, Joseph Emeras, Emmanuel Jeanvoine and Lucas Nussbaum\newline INRIA - France
 #+DATE: May 18, 2016 -- CCGRID 2016 \mylogos
 #+STARTUP: beamer overview indent
 
@@ -39,8 +39,6 @@
 #+LATEX_HEADER:   \let\reset@color\beamerorig@reset@color}
 #+LATEX_HEADER: \makeatother
 #+LATEX_HEADER: \newcommand{\bottomcitepre}[1]{\fbox{\vbox{\footnotesize #1}}}
-
-#+BIND: org-latex-title-command ""
 
 
 

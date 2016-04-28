@@ -1,4 +1,4 @@
-% Created 2016-04-28 Thu 15:52
+% Created 2016-04-28 Thu 16:52
 \documentclass[11pt,xcolor=dvipsnames,presentation]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -45,7 +45,7 @@
 \usefonttheme{}
 \useinnertheme{}
 \useoutertheme{}
-\author{Cristian Ruiz, Emmanuel Jeanvoine and Lucas Nussbaum\newline INRIA - France}
+\author{Cristian Ruiz, Joseph Emeras, Emmanuel Jeanvoine and Lucas Nussbaum\newline INRIA - France}
 \date{May 18, 2016 -- CCGRID 2016 \mylogos}
 \title{Distem: Evaluation of Fault Tolerance and Load Balancing Strategies in HPC Runtimes through Emulation}
 \hypersetup{
@@ -54,10 +54,14 @@
   pdfcreator={Emacs 24.3.1 (Org mode 8.2.10)}}
 \begin{document}
 
-*
+\maketitle
 
 
-\begin{frame}[label=sec-0-0-1]{HPC runtimes}
+\section{}
+\label{sec-1}
+
+
+\begin{frame}[label=sec-1-0-1]{HPC runtimes}
 \begin{itemize}
 \item According to the IESP report a strong effort must be made on improving HPC software stacks
 \item Central part of this stack is the \alert{HPC runtime}
@@ -74,7 +78,7 @@
   International Journal of High Performance Computer Applications,2011}
 \end{frame}
 
-\begin{frame}[label=sec-0-0-2]{Evaluating current HPC runtimes}
+\begin{frame}[label=sec-1-0-2]{Evaluating current HPC runtimes}
 \begin{block}{Several properties to evaluate}
 \begin{itemize}
 \item Programability
@@ -97,7 +101,7 @@ more components $\Rightarrow$ shorter MTBF \newline
 \end{frame}
 
 
-\begin{frame}[label=sec-0-0-3]{How people evaluate HPC runtimes?}
+\begin{frame}[label=sec-1-0-3]{How people evaluate HPC runtimes?}
 Some examples
 
 \begin{itemize}
@@ -117,7 +121,7 @@ Some examples
 \item For MPI based runtimes, most of the experiments are done using real platforms
 \end{itemize}
 \end{frame}
-\begin{frame}[label=sec-0-0-4]{Evaluating current HPC runtimes}
+\begin{frame}[label=sec-1-0-4]{Evaluating current HPC runtimes}
 \begin{itemize}
 \item Carrying out evaluation under complex realistic conditions is \alert{hard}
 \item Simulator:
@@ -137,7 +141,7 @@ Some examples
 
 
 \section{Distem}
-\label{sec-1}
+\label{sec-2}
 \let\tableofcontents=\tmptableofcontents
 \AtBeginSection[]
   {
@@ -148,7 +152,7 @@ Some examples
   }
 \input{org-babel-document-preembule.tex}
 
-\begin{frame}[label=sec-1-0-1]{Distem}
+\begin{frame}[label=sec-2-0-1]{Distem}
 \begin{center}
 \huge
 An emulator for distributed systems\\[0.5em]
@@ -177,7 +181,7 @@ so it \alert{matches the experimental conditions you need}\\[1em]
 
 
 
-\begin{frame}[label=sec-1-0-2]{Distem features}
+\begin{frame}[label=sec-2-0-2]{Distem features}
 The features of Distem include:
 
 \begin{itemize}
@@ -196,7 +200,7 @@ Distem uses modern Linux functionality:
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label=sec-1-0-3]{In this work}
+\begin{frame}[label=sec-2-0-3]{In this work}
 We integrated the following improvements in order to
 make possible the evaluation of HPC runtimes:
 
@@ -207,7 +211,7 @@ make possible the evaluation of HPC runtimes:
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label=sec-1-0-4]{Evolving experimental conditions}
+\begin{frame}[label=sec-2-0-4]{Evolving experimental conditions}
 
 \begin{minipage}{0.5\textwidth}
 \begin{center}
@@ -229,7 +233,7 @@ like it could happened in reality
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label=sec-1-0-5]{Failure injection framework}
+\begin{frame}[label=sec-2-0-5]{Failure injection framework}
 
 \begin{itemize}
 \item We take into account failures that provoke a lost of the node (very common failures)
@@ -246,7 +250,7 @@ like it could happened in reality
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label=sec-1-0-6]{Event injection framework}
+\begin{frame}[label=sec-2-0-6]{Event injection framework}
 \begin{itemize}
 \item Increase the reproducibility of experiments
 \item Distem supports the following modifications for a given set of nodes:
@@ -262,8 +266,8 @@ a probabilistic distribution
 
 
 \section{Experimental results}
-\label{sec-2}
-\begin{frame}[label=sec-2-0-1]{Experiment setup}
+\label{sec-3}
+\begin{frame}[label=sec-3-0-1]{Experiment setup}
 \begin{itemize}
 \item We evaluate Charm++, OpenMPI and MPICH runtimes
 \item Charm++: Jacobi3D and Stencil3D
@@ -280,7 +284,7 @@ a probabilistic distribution
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label=sec-2-0-2]{Failure detection of HPC runtimes}
+\begin{frame}[label=sec-3-0-2]{Failure detection of HPC runtimes}
 \begin{itemize}
 \item We run an application on top of the HPC runtime
 \item We inject different types of faults and observe how the HPC runtime reacts
@@ -312,7 +316,7 @@ a probabilistic distribution
 \end{table}
 \end{frame}
 
-\begin{frame}[label=sec-2-0-3]{Validity of fault injection mechanism}
+\begin{frame}[label=sec-3-0-3]{Validity of fault injection mechanism}
 \begin{itemize}
 \item We run Jacobi3D application using 64 nodes, running 1 Charm++ process per node
 
@@ -342,7 +346,7 @@ a probabilistic distribution
 \end{table}
 \end{frame}
 
-\begin{frame}[label=sec-2-0-4]{Evaluating load balancing strategies in Charm++}
+\begin{frame}[label=sec-3-0-4]{Evaluating load balancing strategies in Charm++}
 \begin{itemize}
 \item We create a platform composed 128 vnodes distributed over 8 physical nodes.
 
@@ -359,7 +363,7 @@ a probabilistic distribution
 The event injection framework was used to automate the creation of these scenarios
 \end{frame}
 
-\begin{frame}[label=sec-2-0-5]{Evaluating load balancing strategies in Charm++}
+\begin{frame}[label=sec-3-0-5]{Evaluating load balancing strategies in Charm++}
 Running Stencil3D using 128 processes in the heterogeneous platform
 
 \vspace{0.5cm}
@@ -389,7 +393,7 @@ Running Stencil3D using 128 processes in the heterogeneous platform
     \end{center}\end{minipage}
 \end{frame}
 
-\begin{frame}[label=sec-2-0-6]{Evaluating load balancing strategies in Charm++}
+\begin{frame}[label=sec-3-0-6]{Evaluating load balancing strategies in Charm++}
 Running Stencil3D using 128 processes in the dynamic platform
 
 \vspace{0.5cm}
@@ -421,9 +425,9 @@ Running Stencil3D using 128 processes in the dynamic platform
 
 
 \section{Conclusions}
-\label{sec-3}
+\label{sec-4}
 
-\begin{frame}[label=sec-3-0-1]{Conclusions}
+\begin{frame}[label=sec-4-0-1]{Conclusions}
 \begin{itemize}
 \item Being able to execute experiments on a large set of platform
 configurations in a repeatable way is a sound basis to design
