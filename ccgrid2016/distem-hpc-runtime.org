@@ -1,0 +1,441 @@
+
+#+TITLE: Distem: Evaluation of Fault Tolerance and Load Balancing Strategies in HPC Runtimes through Emulation
+#+AUTHOR: Cristian Ruiz, Emmanuel Jeanvoine and Lucas Nussbaum\newline INRIA - France
+#+DATE: May 18, 2016 -- CCGRID 2016 \mylogos
+#+STARTUP: beamer overview indent
+
+#+OPTIONS: H:3 toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+#+LaTeX_CLASS_OPTIONS: [11pt,xcolor=dvipsnames,presentation]
+#+BEAMER_COLOR_THEME:
+#+BEAMER_FONT_THEME:
+#+BEAMER_HEADER:
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+BEAMER_INNER_THEME:
+#+BEAMER_OUTER_THEME:
+#+BEAMER_THEME: default
+#+LATEX_CLASS: beamer
+
+#+LATEX_HEADER: \PassOptionsToPackage{svgnames}{xcolor}
+#+LATEX_HEADER: \let\AtBeginDocumentSav=\AtBeginDocument
+#+LATEX_HEADER: \def\AtBeginDocument#1{}
+#+LATEX_HEADER: \input{org-babel-style-preembule.tex}
+#+LATEX_HEADER: \let\AtBeginDocument=\AtBeginDocumentSav
+#+LATEX_HEADER: \usepackage{minted}
+#+LATEX_HEADER: \usepackage{multirow}
+#+LATEX_HEADER: \usetikzlibrary{arrows,shapes,positioning}
+
+#+LATEX_HEADER: \let\tmptableofcontents=\tableofcontents
+#+LATEX_HEADER: \def\tableofcontents{}
+#+LATEX_HEADER:  \usepackage{color,soul}
+#+LATEX_HEADER:  \definecolor{lightblue}{rgb}{1,.9,.7}
+#+LATEX_HEADER:  \sethlcolor{lightblue}
+#+LATEX_HEADER:  \let\hrefold=\href
+#+LATEX_HEADER:  \renewcommand{\href}[2]{\hrefold{#1}{\SoulColor\hl{#2}}}
+#+LATEX_HEADER: \newcommand{\muuline}[1]{\SoulColor\hl{#1}}
+#+LATEX_HEADER: \makeatletter
+#+LATEX_HEADER: \newcommand\SoulColor{%
+#+LATEX_HEADER:   \let\set@color\beamerorig@set@color
+#+LATEX_HEADER:   \let\reset@color\beamerorig@reset@color}
+#+LATEX_HEADER: \makeatother
+#+LATEX_HEADER: \newcommand{\bottomcitepre}[1]{\fbox{\vbox{\footnotesize #1}}}
+
+#+BIND: org-latex-title-command ""
+
+
+
+#+LATEX_HEADER: \def\mylogos{\\\vspace{1cm}\begin{center}\includegraphics[height=1.2cm]{logos/inr_logo_sans_sign_coul.png}\hspace{0.5cm}\insertlogo{\includegraphics[height=1.2cm]{logos/grid5000.png}}\hspace{0.5cm}\end{center}\vspace{-1cm}}
+
+
+*
+:PROPERTIES:
+:UNNUMBERED: t
+:END:
+
+
+*** HPC runtimes
+
+- According to the IESP report a strong effort must be made on improving HPC software stacks
+- Central part of this stack is the *HPC runtime*
+- HPC runtime enables the execution, managing and debugging of parallel applications
+- OpenMPI, Charm++, CUDA, etc.
+
+
+ *For this work we focus on studying HPC runtimes*
+
+\vspace{1cm}
+#+BEGIN_LaTeX
+  \bottomcitepre{Dongarra, Jack \textit{et Al.},
+    {\textit{The International Exascale Software Project Roadmap}},
+    International Journal of High Performance Computer Applications,2011}
+#+END_LaTeX
+
+*** Evaluating current HPC runtimes
+
+**** Several properties to evaluate
+
+  - Programability
+  - Scalability
+  - *Fault tolerance*
+  - *Load balancing*
+
+**** We focus on
+
+- Fault tolerance:
+  more components $\Rightarrow$ shorter MTBF \newline
+  (Mean Time Between Failures)
+
+- Load balancing: Cloud computing, Green computing, \newline
+  Data centers' policies
+
+#  reduction of CPU frequencies in the presence of excessive heat, etc.
+
+# - Experimentation is essential in this context.
+
+# This has to have a logic sequence
+
+# Why we evaluate HPC runtimes, why it is necessary to evalute load balancing and fault tolerance
+
+# Study of a central part of HPC software stack => the HPC runtime
+
+# big infrastructures => more probability of failures
+
+# more nodes => Shorter MTBF (Mean Time between failures)
+
+
+*** How people evaluate HPC runtimes?
+
+Some examples
+
+- Ad-hoc simulator and real application trace from IBM BG/Q
+#+BEGIN_LaTeX
+  \bottomcitepre{Harshitha Menon and L. V. Kalew,
+    {\textit{A Distributed Dynamic Load Balancer for Iterative Applications}},
+    SC'2013}
+#+END_LaTeX
+
+- Leveraging DVFS processor capabilities
+#+BEGIN_LaTeX
+  \bottomcitepre{Osman Sarood \textit{et Al.},
+    {\textit{A 'Cool' Way of Improving the Reliability of HPC Machines}},
+    SC'2013}
+#+END_LaTeX
+- For MPI based runtimes, most of the experiments are done using real platforms
+*** Evaluating current HPC runtimes
+
+- Carrying out evaluation under complex realistic conditions is *hard*
+- Simulator:
+   - simplified assumptions $\frowny$
+   - lower realism $\frowny$
+   - not possible to run a complete software stack $\frowny$
+
+- Real platform:
+   - expensive $\frowny$
+   - lacks of reproducibility $\frowny$
+
+# Here I will describe the related work,
+# why it is difficult to evalute HPC runtime in
+# real conditions and I can then present
+# our solution for this problem.
+
+
+* Distem
+#+BEGIN_LaTeX
+\let\tableofcontents=\tmptableofcontents
+\AtBeginSection[]
+  {
+     \begin{frame}<beamer>
+     \frametitle{Outline}
+     \tableofcontents[currentsection]
+     \end{frame}
+  }
+#+END_LaTeX
+#+LaTeX: \input{org-babel-document-preembule.tex}
+
+*** Distem
+
+#+BEGIN_LaTeX
+\begin{center}
+\huge
+An emulator for distributed systems\\[0.5em]
+\large
+Take your \alert{real application}\\[0.5em]
+Run it on a \alert{cluster}\\[0.5em]
+And use \alert{Distem} to \alert{alter the platform}\\
+so it \alert{matches the experimental conditions you need}\\[1em]
+\normalsize
+\begin{tikzpicture}
+\pgftext[right]{\includegraphics[width=3cm]{figures/cluster.jpg}}
+\draw[line width=1.5mm] (0.1, 0) -- (0.9, 0);
+\draw[line width=1.5mm] (0.5, -0.4) -- (0.5, 0.4);
+\pgftext[x=1.25cm,left]{\includegraphics[width=2.5cm]{figures/distem.png}}
+\draw[line width=1.5mm,->] (4.1,0) -> (4.9,0);
+\begin{scope}[xshift=2cm]
+\pgftext[x=5cm,y=0.75cm,center]{Heterogeneous nodes}
+\pgftext[x=5cm,y=0.25cm,center]{Long distance networks}
+\pgftext[x=5cm,y=-0.25cm,center]{Faults, perf. variations}
+\pgftext[x=5cm,y=-0.75cm,center]{Grid, Cloud, P2P features}
+\pgftext[x=5cm,y=-1.25cm,center]{\Large\ldots}
+\end{scope}
+\end{tikzpicture}
+\end{center}
+
+#+END_LaTeX
+# *Emulation combines advantages of simulation and in-situ*
+
+
+
+*** Distem features
+
+The features of Distem include:
+
+- running many virtual nodes on each physical node
+- emulation of CPU performance, network topologies, IO speed
+
+Distem uses modern Linux functionality:
+
+- Linux containers
+- control groups
+- CPU frequency scaling
+- traffic control
+- I/O throttling
+
+*** In this work
+
+We integrated the following improvements in order to
+make possible the evaluation of HPC runtimes:
+
+- Evolving experimental conditions
+- Failure injection framework
+- Event injection framework
+
+*** Evolving experimental conditions
+
+#+BEGIN_LaTeX
+
+    \begin{minipage}{0.5\textwidth}
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{figures/links}
+    \end{center}\end{minipage}\hfill
+    \begin{minipage}{0.5\textwidth}
+    \begin{center}
+        \includegraphics[width=\textwidth]{figures/procs}
+    \end{center}\end{minipage}
+
+
+#+END_LaTeX
+
+- Heterogeneous conditions can be created: CPU frequencies,
+  different IO and network capabilities
+
+- These features can be updated dynamically
+
+- This is useful to achieve complex experiments where the platform is modified,
+  like it could happened in reality
+
+*** Failure injection framework
+
+# This parts arrive without announce it is difficult to do the transition
+
+- We take into account failures that provoke a lost of the node (very common failures)
+
+- Nodes can be lost in three different ways:
+
+  - *Graceful*: the node is shut down cleanly, using an operating system command
+  - *Soft*: the node is forced to shut down
+  - *Hard*: the node failed abruptly
+
+- We do not take into account byzantine failures
+
+*** Event injection framework
+
+ # - Virtual platform modifications have to be possible in an automatic and deterministic way
+- Increase the reproducibility of experiments
+- Distem supports the following modifications for a given set of nodes:
+  - CPU frequency
+  - Network capabilities (latency and bandwidth)
+  - Failures
+- These modifications can be injected using a deterministic behavior or using
+  a probabilistic distribution
+
+
+* Experimental results
+*** Experiment setup
+
+- We evaluate Charm++, OpenMPI and MPICH runtimes
+- Charm++: Jacobi3D and Stencil3D
+- MPI-based runtimes:  NAS parallel benchmarks
+
+- 3 Grid'5000 clusters located in two sites
+
+- Experimental evaluation:
+  - /Failure detection of HPC runtimes/
+  - /Validity of fault injection mechanism/
+  - /Evaluation of load balancing strategies in Charm++/
+
+*** Failure detection of HPC runtimes
+
+
+- We run an application on top of the HPC runtime
+- We inject different types of faults and observe how the HPC runtime reacts
+
+#+BEGIN_LaTeX
+
+\begin{table}[ht!]
+  { \scriptsize
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{3}{*}{\textbf{Failure}} &
+  \multicolumn{6}{c|}{\textbf{Runtime}}  \\
+  \cline{1-7}
+  &\multicolumn{2}{c}{\textbf{Charm++}}&
+  \multicolumn{2}{|c}{\textbf{OpenMPI}}&
+  \multicolumn{2}{|c|}{\textbf{MPICH}}\\
+  \cline{2-7}
+  &\textbf{Detected} & \textbf{Action} & \textbf{Detected} & \textbf{Action} & \textbf{Detected} & \textbf{Action}  \\
+  \hline
+  \textbf{Graceful}  &   Yes  & C   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
+  \textbf{Soft}  &       Yes  & C   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
+  \textbf{Hard}   &      \color{red}{No}   & -   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
+  \hline
+  \end{tabular}
+  }
+  \caption{Failure detection. C refers to the roll-back of the application to the previous checkpoint,
+  H refers to the fact that processes hang, E refers to the termination of MPI processes}
+  \label{table:assess_HPC_runtimes}
+\end{table}
+
+
+#+END_LaTeX
+
+# - We evaluate several version of OpenMPI: 1.6.5, 1.8.5, 1.10.
+
+*** Validity of fault injection mechanism
+
+
+- We run Jacobi3D application using 64 nodes, running 1 Charm++ process per node
+
+- Different degrees of oversubscription
+
+- We use the event injection framework to inject the same trace for all cases
+
+#+BEGIN_LaTeX
+\begin{table}[ht!]
+	\center
+  {\scriptsize
+  \begin{tabular}{|c|c|c|}
+  \hline
+    \textbf{Mechanism}  &  \textbf{ \% termination} & \textbf{ Mean walltime
+    (secs)} \\
+  \hline
+  \textbf{Charm++ Injection}  &  \color{red}{100\%} & 268.55\\
+  \textbf{Real Injection}  &  66\% & 267.19\\
+  \textbf{Distem 1vn/node}  &  56\% & 286.43\\
+  \textbf{Distem 2vn/node}  &  50\% & 287.05\\
+  \textbf{Distem 4vn/node}  &  56\% & 294.45\\
+  \hline
+  \end{tabular}
+  }
+  \caption{Percentage of successful application executions}
+  \label{table:FT_validation}
+\end{table}
+
+#+END_LaTeX
+
+*** Evaluating load balancing strategies in Charm++
+
+- We create a platform composed 128 vnodes distributed over 8 physical nodes.
+
+- We experiment with two different scenarios:
+
+  - *Heterogeneous*: half of the vnodes have a CPU clock reduced to 50 %
+
+  - *Dynamic*: the available CPU power of a sub-part of the vnodes is dynamic.
+
+
+The event injection framework was used to automate the creation of these scenarios
+
+*** Evaluating load balancing strategies in Charm++
+
+   Running Stencil3D using 128 processes in the heterogeneous platform
+
+#+BEGIN_LaTeX
+\vspace{0.5cm}
+\begin{minipage}{0.30\textwidth}
+\begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous.pdf}
+    \caption{\centering LBOff \newline Walltime: 341 secs}
+    \label{fig:heterogeneous}
+\end{figure}
+    \end{center}\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous_refinelb.pdf}
+   \caption{\centering RefineLB \newline Walltime: 320 secs}
+    \label{fig:refinelbh}
+\end{figure}
+\end{center}\end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous_hybrid}
+    \caption{\centering Hybrid \newline Walltime: 356 secs}
+        \label{fig:hybridlbh}
+\end{figure}
+    \end{center}\end{minipage}
+
+#+END_LaTeX
+
+*** Evaluating load balancing strategies in Charm++
+
+Running Stencil3D using 128 processes in the dynamic platform
+
+#+BEGIN_LaTeX
+\vspace{0.5cm}
+\begin{minipage}{0.30\textwidth}
+\begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic}
+    \caption{\centering LBOff \newline Walltime: 347 secs}
+    \label{fig:heterogeneous}
+\end{figure}
+    \end{center}\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic_refinelb}
+   \caption{\centering RefineLB \newline Walltime: 322 secs}
+    \label{fig:refinelbh}
+\end{figure}
+\end{center}\end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic_hybrid}
+    \caption{\centering Hybrid \newline Walltime: 359 secs}
+        \label{fig:hybridlbh}
+\end{figure}
+    \end{center}\end{minipage}
+
+#+END_LaTeX
+
+
+* Conclusions
+
+*** Conclusions
+
+- Being able to execute experiments on a large set of platform
+  configurations in a repeatable way is a sound basis to design
+  and improve the HPC runtimes in the future
+
+\vspace{0.5cm}
+- *Distem:*
+  + offers realistic experimental conditions
+
+  + simplified the uncovering of problems in the
+    failure handling for widely used HPC runtimes
+
+  + enables experimenters to easily simulate perturbations and
+    heterogeneity of nodes
