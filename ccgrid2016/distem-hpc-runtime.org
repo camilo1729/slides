@@ -54,7 +54,7 @@
 *** HPC runtimes
 
 - According to the IESP report a strong effort must be made on improving HPC software stacks
-- Central part of this stack is the *HPC runtime*
+- One of the main parts of this stack is dedicated to *HPC runtime*
 - HPC runtime enables the execution, managing and debugging of parallel applications
 - OpenMPI, Charm++, CUDA, etc.
 
@@ -65,14 +65,14 @@
 #+BEGIN_LaTeX
   \bottomcitepre{Dongarra, Jack \textit{et Al.},
     {\textit{The International Exascale Software Project Roadmap}},
-    International Journal of High Performance Computer Applications,2011}
+    International Journal of High Performance Computer Applications, 2011}
 #+END_LaTeX
 
 *** Evaluating current HPC runtimes
 
 **** Several properties to evaluate
 
-  - Programability
+  - Programmability
   - Scalability
   - *Fault tolerance*
   - *Load balancing*
@@ -188,7 +188,7 @@ so it \alert{matches the experimental conditions you need}\\[1em]
 The features of Distem include:
 
 - running many virtual nodes on each physical node
-- emulation of CPU performance, network topologies, IO speed
+- emulation of CPU performance, network topologies, I/O speed
 
 Distem uses modern Linux functionality:
 
