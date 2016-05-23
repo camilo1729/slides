@@ -1,0 +1,617 @@
+#+TITLE: ADT COSETTE
+#+AUTHOR: Cristian Ruiz
+#+EMAIL:     {Cristian.Ruiz}@inria.fr
+#+DATE: May 31, 2016 -- engineers seminar \mylogos
+
+#+STARTUP: beamer overview indent
+
+#+OPTIONS: H:3 toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+#+LaTeX_CLASS_OPTIONS: [11pt,xcolor=dvipsnames,presentation]
+#+BEAMER_COLOR_THEME:
+#+BEAMER_FONT_THEME:
+#+BEAMER_HEADER:
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+BEAMER_INNER_THEME:
+#+BEAMER_OUTER_THEME:
+#+BEAMER_THEME: default
+#+LATEX_CLASS: beamer
+
+#+LATEX_HEADER: \PassOptionsToPackage{svgnames}{xcolor}
+#+LATEX_HEADER: \let\AtBeginDocumentSav=\AtBeginDocument
+#+LATEX_HEADER: \def\AtBeginDocument#1{}
+#+LATEX_HEADER: \input{org-babel-style-preembule.tex}
+#+LATEX_HEADER: \let\AtBeginDocument=\AtBeginDocumentSav
+#+LATEX_HEADER: \usepackage{minted}
+#+LATEX_HEADER: \usepackage{multirow}
+#+LATEX_HEADER: \usetikzlibrary{arrows,shapes,positioning}
+#+LaTeX_HEADER: \usepackage{subcaption}
+#+LATEX_HEADER: \let\tmptableofcontents=\tableofcontents
+#+LATEX_HEADER: \def\tableofcontents{}
+#+LATEX_HEADER:  \usepackage{color,soul}
+#+LATEX_HEADER:  \definecolor{lightblue}{rgb}{1,.9,.7}
+#+LATEX_HEADER:  \sethlcolor{lightblue}
+#+LATEX_HEADER:  \let\hrefold=\href
+#+LATEX_HEADER:  \renewcommand{\href}[2]{\hrefold{#1}{\SoulColor\hl{#2}}}
+#+LATEX_HEADER: \newcommand{\muuline}[1]{\SoulColor\hl{#1}}
+#+LATEX_HEADER: \makeatletter
+#+LATEX_HEADER: \newcommand\SoulColor{%
+#+LATEX_HEADER:   \let\set@color\beamerorig@set@color
+#+LATEX_HEADER:   \let\reset@color\beamerorig@reset@color}
+#+LATEX_HEADER: \makeatother
+#+LATEX_HEADER: \newcommand{\bottomcitepre}[1]{\fbox{\vbox{\footnotesize #1}}}
+
+
+
+#+LATEX_HEADER: \def\mylogos{\\\vspace{1cm}\begin{center}\includegraphics[height=1.2cm]{logos/inr_logo_sans_sign_coul.png}\hspace{0.5cm}\insertlogo{\includegraphics[height=1.2cm]{logos/grid5000.png}}\hspace{0.5cm}\end{center}\vspace{-1cm}}
+
+
+*
+:PROPERTIES:
+:UNNUMBERED: t
+:END:
+*** Validation in Computer Science
+
+Two classical approaches for validation:
+
+- *Formal:* equations, proofs, etc.
+- *Experimental*, on a scientific instrument.
+
+**** In reality
+
+Given the size and complexity of distributed systems,
+it is difficult to carry out complete analytic studies.
+*So, the experimental approach is commonly seen*.
+
+**** Need of
+
+*Reproducible research*
+
+*** Grid'5000
+
+
+
+A large-scale, shared testbed supporting high-quality,
+reproducible research on distributed systems:
+
+- Configurable.
+- High Performance Computing, Grids, Peer-to-peer systems, Cloud computing.
+
+Another examples of Testbeds: Chameleon, Cloudlab
+**** image                                                         :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.33]{figures/hpc.png}
+  \label{fig:hpc}
+\end{figure}
+#+END_LaTeX
+
+
+*** Goal of the ADT COSETTE
+
+   Conceive, consolidate and extend a set of tools
+   aimed at experimenting with distributed systems
+   (Cloud, Grid, HPC, P2P)
+
+**** Tasks
+    - Development of Ruby-Cute, a library that gathers useful
+      procedures for experimenting with distributed systems
+    - *Extend Distem to meet Cloud and HPC research requirements*
+
+
+**** Supervised by
+
+Lucas Nussbaum, Emmanuel Jeanvoine
+
+
+
+* Distem
+#+BEGIN_LaTeX
+\let\tableofcontents=\tmptableofcontents
+\AtBeginSection[]
+  {
+     \begin{frame}<beamer>
+     \frametitle{Outline}
+     \tableofcontents[currentsection]
+     \end{frame}
+  }
+#+END_LaTeX
+#+LaTeX: \input{org-babel-document-preembule.tex}
+
+*** Distem
+
+#+BEGIN_LaTeX
+\begin{center}
+\huge
+An emulator for distributed systems\\[0.5em]
+\large
+Take your \alert{real application}\\[0.5em]
+Run it on a \alert{cluster}\\[0.5em]
+And use \alert{Distem} to \alert{alter the platform}\\
+so it \alert{matches the experimental conditions you need}\\[1em]
+\normalsize
+\begin{tikzpicture}
+\pgftext[right]{\includegraphics[width=3cm]{figures/cluster.jpg}}
+\draw[line width=1.5mm] (0.1, 0) -- (0.9, 0);
+\draw[line width=1.5mm] (0.5, -0.4) -- (0.5, 0.4);
+\pgftext[x=1.25cm,left]{\includegraphics[width=2.5cm]{figures/distem.png}}
+\draw[line width=1.5mm,->] (4.1,0) -> (4.9,0);
+\begin{scope}[xshift=2cm]
+\pgftext[x=5cm,y=0.75cm,center]{Heterogeneous nodes}
+\pgftext[x=5cm,y=0.25cm,center]{Long distance networks}
+\pgftext[x=5cm,y=-0.25cm,center]{Faults, perf. variations}
+\pgftext[x=5cm,y=-0.75cm,center]{Grid, Cloud, P2P features}
+\pgftext[x=5cm,y=-1.25cm,center]{\Large\ldots}
+\end{scope}
+\end{tikzpicture}
+\end{center}
+
+#+END_LaTeX
+# *Emulation combines advantages of simulation and in-situ*
+
+
+*** Distem features
+
+The features of Distem include:
+
+- running many virtual nodes on each physical node
+- emulation of CPU performance, network topologies, I/O speed
+
+Distem uses modern Linux functionality:
+
+- Linux containers
+- control groups
+- CPU frequency scaling
+- traffic control
+- I/O throttling
+
+
+* Distem valildation for HPC applications
+*** Containers
+
+ *Containers* refers generally to *Operating-system-level virtualization*,
+  where the *kernel* of an operating system allows for multiple isolated *user-space instances*.
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.65]{figures/lxc-vm.jpg}
+  \label{fig:hpc}
+\end{figure}
+#+END_LaTeX
+
+*** Implementations
+
+- Chroot
+- Linux-VServer
+- FreeBSD Jails
+- Solaris Containers
+- OpenVZ
+
+*** /namespaces and cgroups/
+
+- Both features incorporated in Linux kernel since 2006 (Linux 2.6.24)
+- Several container solutions: LXC, libvirt, libcontainer, systemd-nspawn, Docker
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+\includegraphics[scale=0.30]{figures/libcontainer-diagram.pdf}
+  \label{fig:hpc}
+\end{figure}
+#+END_LaTeX
+
+# /libcontainer/ *will become the standard to manage containers*
+
+*** Benefits of using containers in HPC
+
+- Containers allow to easily provision a full software stack.
+  They bring:
+  - portability
+  - user customization
+  - reproducibility of experiments
+
+- Containers provide a lower oversubscription overhead than full vms, enabling:
+  - a better resource utilization
+  - to be used as a building block for large scale platform emulators
+
+
+*** In this task, we answer:
+
+- What is the overhead of oversubscription using different versions of Linux kernel?
+- What is the performance of inter-container communication?
+- What is the impact of running an HPC workload with several MPI processes inside containers?
+- What is the impact of network technology ?
+
+*** Experimental setup
+
+**** Hardware
+- Cluster in Grid'5000 Testbed where each node is equipped
+  with two Intel Xeon E5-2630v3 processors (with 8 cores each), 128 GB of RAM and a 10 GbE adapter
+- Our experimental setup included up to 64 machines
+
+**** Software
+- Debian Jessie, Linux kernel versions: 3.2, 3.16 and 4.0, OpenMPI and NPB.
+  We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
+# \cite{Shende06thetau}.
+# - We automate the experimentation processes using Distem\footnote{https://distem.gforge.inria.fr}
+#   and Kameleon\footnote{https://github.com/camilo1729/distem-recipes}
+
+
+*** Network setup
+
+- *Veth pair + Linux bridge*
+- Veth pair + OpenvSwitch
+- MACVLAN or SR-IOV
+- Phys
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.4]{figures/lxc-veth.pdf}
+  \label{fig:hpc}
+\end{figure}
+#+END_LaTeX
+
+*** Linux kernel version
+
+   32 containers running on: 8,16,32 physical machines.
+
+**** Results                                               :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :BEAMER_env: block
+    :END:
+
+- 2/node
+  - 3.2: *1577.78%*
+  - 3.16: *22.67%*
+  - 4.0: *2.40%*
+- Overhead present in MPI communication
+- Since Linux kernel version *3.11*, *TSO* was enabled in *veth*
+
+
+# What do we observe?
+
+
+# There is a high performance overhead when using Linux kernel older than 3.16
+# We are sure that if we use a kernel higher than 3.16 we are fine, we dont have to worry about.
+# This behavior was observe for almost every benchmark.
+
+# Why do we use 32 machines?
+
+# well, we chose one of example. We start to see performance degradation form 8 nodes.
+# This problems persist and it it even more severe when the number of nodes increases.
+
+# So, it is important to choose a good kernel
+
+
+**** image                                                         :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+
+
+# *** notes of results						   :noexport:
+
+# This notes explain the results obtained
+
+# The execution with kernel 3.2 of 2 container per node takes 15 times more than native
+# communication time is really degradated, cpu is not affected.
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.32]{figures/execution_time-kernel-cgB.pdf}
+  \label{fig:hpc}
+  \caption{CG.B}
+\end{figure}
+#+END_LaTeX
+
+*** Multinode inter-container communication
+
+- 16 MPI processes were run per physical machine or container
+- We used a maximum of 32 physical machines
+#+BEGIN_LaTeX
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.42\textwidth}
+    \includegraphics[scale=0.25,angle=0]{figures/veth_overhead-tso-ftB.pdf}
+    \caption{FT Class B}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.42\textwidth}
+    \includegraphics[scale=0.25,angle=0]{figures/veth_overhead-tso-cgB.pdf}
+    \caption{CG Class B}
+  \end{subfigure}
+\end{figure}
+
+#+END_LaTeX
+
+*** Interconnection comparison
+
+- *Veth pair + Linux bridge*
+- *Veth pair + OpenvSwitch*
+- *SR-IOV*
+- Using Linux kernel 4.3
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.4]{figures/lxc-veth.pdf}
+  \label{fig:hpc}
+\end{figure}
+#+END_LaTeX
+
+*** One machine (intra-node communication)
+- 1 MPI process per container
+- 16 containers in total
+#+BEGIN_LaTeX
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{FT Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/intra-container-ftB.pdf}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{EP Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/intra-container-epB.pdf}
+  \end{subfigure}
+\end{figure}
+
+#+END_LaTeX
+
+*** Multi-machine (4 nodes)
+
+- 4 containers per machine
+- Each container configured with 4 cores
+#+BEGIN_LaTeX
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{LU Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/inter-container-luB.pdf}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{EP Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/inter-container-epB.pdf}
+  \end{subfigure}
+\end{figure}
+
+#+END_LaTeX
+
+*** Multi-machine (4 nodes other topology)
+
+- 4 containers per machine
+- Each container configured with 4 cores
+
+#+BEGIN_LaTeX
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{LU Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/inter-container-topo-luB.pdf}
+    \label{fig:epkernelversion}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \caption{EP Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/inter-container-topo-epB.pdf}
+\label{fig:lukernelversion}
+  \end{subfigure}
+\end{figure}
+
+#+END_LaTeX
+* Distem experimental conditions
+*** In this task
+
+We integrated the following improvements in order to
+make possible the evaluation of HPC runtimes:
+
+- Evolving experimental conditions
+- Failure injection framework
+- Event injection framework
+
+*** Evolving experimental conditions
+
+#+BEGIN_LaTeX
+
+    \begin{minipage}{0.5\textwidth}
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{figures/links}
+    \end{center}\end{minipage}\hfill
+    \begin{minipage}{0.5\textwidth}
+    \begin{center}
+        \includegraphics[width=\textwidth]{figures/procs}
+    \end{center}\end{minipage}
+
+
+#+END_LaTeX
+
+- Heterogeneous conditions can be created: CPU frequencies,
+  different IO and network capabilities
+
+- These features can be updated dynamically
+
+- This is useful to achieve complex experiments where the platform is modified,
+  like it could happened in reality
+
+*** Failure injection framework
+
+# This parts arrive without announce it is difficult to do the transition
+
+- We take into account failures that provoke a lost of the node (very common failures)
+
+- Nodes can be lost in three different ways:
+
+  - *Graceful*: the node is shut down cleanly, using an operating system command
+  - *Soft*: the node is forced to shut down
+  - *Hard*: the node failed abruptly
+
+- We do not take into account byzantine failures
+
+*** Event injection framework
+
+ # - Virtual platform modifications have to be possible in an automatic and deterministic way
+- Increase the reproducibility of experiments
+- Distem supports the following modifications for a given set of nodes:
+  - CPU frequency
+  - Network capabilities (latency and bandwidth)
+  - Failures
+- These modifications can be injected using a deterministic behavior or using
+  a probabilistic distribution
+
+*** Experiment setup
+
+- We evaluate Charm++, OpenMPI and MPICH runtimes
+- Charm++: Jacobi3D and Stencil3D
+- MPI-based runtimes:  NAS parallel benchmarks
+
+- 3 Grid'5000 clusters located in two sites
+
+- Experimental evaluation:
+  - /Failure detection of HPC runtimes/
+  - /Validity of fault injection mechanism/
+  - /Evaluation of load balancing strategies in Charm++/
+
+*** Failure detection of HPC runtimes
+
+
+- We run an application on top of the HPC runtime
+- We inject different types of faults and observe how the HPC runtime reacts
+
+#+BEGIN_LaTeX
+
+\begin{table}[ht!]
+  { \scriptsize
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{3}{*}{\textbf{Failure}} &
+  \multicolumn{6}{c|}{\textbf{Runtime}}  \\
+  \cline{1-7}
+  &\multicolumn{2}{c}{\textbf{Charm++}}&
+  \multicolumn{2}{|c}{\textbf{OpenMPI}}&
+  \multicolumn{2}{|c|}{\textbf{MPICH}}\\
+  \cline{2-7}
+  &\textbf{Detected} & \textbf{Action} & \textbf{Detected} & \textbf{Action} & \textbf{Detected} & \textbf{Action}  \\
+  \hline
+  \textbf{Graceful}  &   Yes  & C   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
+  \textbf{Soft}  &       Yes  & C   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
+  \textbf{Hard}   &      \color{red}{No}   & -   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
+  \hline
+  \end{tabular}
+  }
+  \caption{Failure detection. C refers to the roll-back of the application to the previous checkpoint,
+  H refers to the fact that processes hang, E refers to the termination of MPI processes}
+  \label{table:assess_HPC_runtimes}
+\end{table}
+
+
+#+END_LaTeX
+
+# - We evaluate several version of OpenMPI: 1.6.5, 1.8.5, 1.10.
+
+*** Evaluating load balancing strategies in Charm++
+
+- We create a platform composed 128 vnodes distributed over 8 physical nodes.
+
+- We experiment with two different scenarios:
+
+  - *Heterogeneous*: half of the vnodes have a CPU clock reduced to 50 %
+
+  - *Dynamic*: the available CPU power of a sub-part of the vnodes is dynamic.
+
+
+The event injection framework was used to automate the creation of these scenarios
+
+*** Evaluating load balancing strategies in Charm++
+
+   Running Stencil3D using 128 processes in the heterogeneous platform
+
+#+BEGIN_LaTeX
+\vspace{0.5cm}
+\begin{minipage}{0.30\textwidth}
+\begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous.pdf}
+    \caption{\centering LBOff \newline Walltime: 341 secs}
+    \label{fig:heterogeneous}
+\end{figure}
+    \end{center}\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous_refinelb.pdf}
+   \caption{\centering RefineLB \newline Walltime: 320 secs}
+    \label{fig:refinelbh}
+\end{figure}
+\end{center}\end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous_hybrid}
+    \caption{\centering Hybrid \newline Walltime: 356 secs}
+        \label{fig:hybridlbh}
+\end{figure}
+    \end{center}\end{minipage}
+
+#+END_LaTeX
+
+*** Evaluating load balancing strategies in Charm++
+
+Running Stencil3D using 128 processes in the dynamic platform
+
+#+BEGIN_LaTeX
+\vspace{0.5cm}
+\begin{minipage}{0.30\textwidth}
+\begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic}
+    \caption{\centering LBOff \newline Walltime: 347 secs}
+    \label{fig:heterogeneous}
+\end{figure}
+    \end{center}\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic_refinelb}
+   \caption{\centering RefineLB \newline Walltime: 322 secs}
+    \label{fig:refinelbh}
+\end{figure}
+\end{center}\end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic_hybrid}
+    \caption{\centering Hybrid \newline Walltime: 359 secs}
+        \label{fig:hybridlbh}
+\end{figure}
+    \end{center}\end{minipage}
+
+#+END_LaTeX
+
+
+* Conclusions
+
+*** Conclusions
+
+- Being able to execute experiments on a large set of platform
+  configurations in a repeatable way is a sound basis to design
+  and improve the HPC runtimes in the future
+
+\vspace{0.5cm}
+- *Distem:*
+  + offers realistic experimental conditions
+
+  + simplified the uncovering of problems in the
+    failure handling for widely used HPC runtimes
+
+  + enables experimenters to easily simulate perturbations and
+    heterogeneity of nodes
