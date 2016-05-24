@@ -1,5 +1,5 @@
 #+TITLE: ADT COSETTE
-#+AUTHOR: Cristian Ruiz
+#+AUTHOR: Cristian Ruiz \\ \vspace{0.5cm} MADYNES Team
 #+EMAIL:     {Cristian.Ruiz}@inria.fr
 #+DATE: May 31, 2016 --  young engineers seminar \mylogos
 
@@ -74,10 +74,10 @@ it is difficult to carry out complete analytic studies.
 A large-scale, shared testbed supporting high-quality,
 reproducible research on distributed systems:
 
-- Configurable.
-- High Performance Computing, Grids, Peer-to-peer systems, Cloud computing.
+- Highly configurable
+- High Performance Computing, Grids, Peer-to-peer systems, Cloud computing
 
-Another examples of Testbeds: Chameleon, Cloudlab
+Another examples of testbeds: Chameleon, Cloudlab
 **** image                                                         :BMCOL:
     :PROPERTIES:
     :BEAMER_col: 0.5
@@ -154,7 +154,6 @@ so it \alert{matches the experimental conditions you need}\\[1em]
 #+END_LaTeX
 # *Emulation combines advantages of simulation and in-situ*
 
-
 *** Distem features
 
 The features of Distem include:
@@ -171,244 +170,7 @@ Distem uses modern Linux functionality:
 - I/O throttling
 
 
-* Distem valildation for HPC applications
-*** Containers
 
- *Containers* refers generally to *Operating-system-level virtualization*,
-  where the *kernel* of an operating system allows for multiple isolated *user-space instances*.
-
-#+BEGIN_LaTeX
-\begin{figure}[!h]
-  \center
-  \includegraphics[scale=0.65]{figures/lxc-vm.jpg}
-  \label{fig:hpc}
-\end{figure}
-#+END_LaTeX
-
-*** Implementations
-
-- Chroot
-- Linux-VServer
-- FreeBSD Jails
-- Solaris Containers
-- OpenVZ
-
-*** /namespaces and cgroups/
-
-- Both features incorporated in Linux kernel since 2006 (Linux 2.6.24)
-- Several container solutions: LXC, libvirt, libcontainer, systemd-nspawn, Docker
-
-#+BEGIN_LaTeX
-\begin{figure}[!h]
-  \center
-\includegraphics[scale=0.30]{figures/libcontainer-diagram.pdf}
-  \label{fig:hpc}
-\end{figure}
-#+END_LaTeX
-
-# /libcontainer/ *will become the standard to manage containers*
-
-*** Benefits of using containers in HPC
-
-- Containers allow to easily provision a full software stack.
-  They bring:
-  - portability
-  - user customization
-  - reproducibility of experiments
-
-- Containers provide a lower oversubscription overhead than full vms, enabling:
-  - a better resource utilization
-  - to be used as a building block for large scale platform emulators
-
-
-*** In this task, we answer:
-
-- What is the overhead of oversubscription using different versions of Linux kernel?
-- What is the performance of inter-container communication?
-- What is the impact of running an HPC workload with several MPI processes inside containers?
-- What is the impact of network technology ?
-
-*** Experimental setup
-
-**** Hardware
-- Cluster in Grid'5000 Testbed where each node is equipped
-  with two Intel Xeon E5-2630v3 processors (with 8 cores each), 128 GB of RAM and a 10 GbE adapter
-- Our experimental setup included up to 64 machines
-
-**** Software
-- Debian Jessie, Linux kernel versions: 3.2, 3.16 and 4.0, OpenMPI and NPB.
-  We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
-# \cite{Shende06thetau}.
-# - We automate the experimentation processes using Distem\footnote{https://distem.gforge.inria.fr}
-#   and Kameleon\footnote{https://github.com/camilo1729/distem-recipes}
-
-
-*** Network setup
-
-- *Veth pair + Linux bridge*
-- Veth pair + OpenvSwitch
-- MACVLAN or SR-IOV
-- Phys
-
-#+BEGIN_LaTeX
-\begin{figure}[!h]
-  \center
-  \includegraphics[scale=0.4]{figures/lxc-veth.pdf}
-  \label{fig:hpc}
-\end{figure}
-#+END_LaTeX
-
-*** Linux kernel version
-
-   32 containers running on: 8,16,32 physical machines.
-
-**** Results                                               :B_block:BMCOL:
-    :PROPERTIES:
-    :BEAMER_col: 0.5
-    :BEAMER_env: block
-    :END:
-
-- 2/node
-  - 3.2: *1577.78%*
-  - 3.16: *22.67%*
-  - 4.0: *2.40%*
-- Overhead present in MPI communication
-- Since Linux kernel version *3.11*, *TSO* was enabled in *veth*
-
-
-# What do we observe?
-
-
-# There is a high performance overhead when using Linux kernel older than 3.16
-# We are sure that if we use a kernel higher than 3.16 we are fine, we dont have to worry about.
-# This behavior was observe for almost every benchmark.
-
-# Why do we use 32 machines?
-
-# well, we chose one of example. We start to see performance degradation form 8 nodes.
-# This problems persist and it it even more severe when the number of nodes increases.
-
-# So, it is important to choose a good kernel
-
-
-**** image                                                         :BMCOL:
-    :PROPERTIES:
-    :BEAMER_col: 0.5
-    :END:
-
-
-# *** notes of results						   :noexport:
-
-# This notes explain the results obtained
-
-# The execution with kernel 3.2 of 2 container per node takes 15 times more than native
-# communication time is really degradated, cpu is not affected.
-
-#+BEGIN_LaTeX
-\begin{figure}[!h]
-  \center
-  \includegraphics[scale=0.32]{figures/execution_time-kernel-cgB.pdf}
-  \label{fig:hpc}
-  \caption{CG.B}
-\end{figure}
-#+END_LaTeX
-
-*** Multinode inter-container communication
-
-- 16 MPI processes were run per physical machine or container
-- We used a maximum of 32 physical machines
-#+BEGIN_LaTeX
-
-\begin{figure}
-  \centering
-  \begin{subfigure}[b]{0.42\textwidth}
-    \includegraphics[scale=0.25,angle=0]{figures/veth_overhead-tso-ftB.pdf}
-    \caption{FT Class B}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.42\textwidth}
-    \includegraphics[scale=0.25,angle=0]{figures/veth_overhead-tso-cgB.pdf}
-    \caption{CG Class B}
-  \end{subfigure}
-\end{figure}
-
-#+END_LaTeX
-
-*** Interconnection comparison
-
-- *Veth pair + Linux bridge*
-- *Veth pair + OpenvSwitch*
-- *SR-IOV*
-- Using Linux kernel 4.3
-
-#+BEGIN_LaTeX
-\begin{figure}[!h]
-  \center
-  \includegraphics[scale=0.4]{figures/lxc-veth.pdf}
-  \label{fig:hpc}
-\end{figure}
-#+END_LaTeX
-
-*** One machine (intra-node communication)
-- 1 MPI process per container
-- 16 containers in total
-#+BEGIN_LaTeX
-
-\begin{figure}
-  \centering
-  \begin{subfigure}[b]{0.42\textwidth}
-    \caption{FT Class B}
-    \includegraphics[scale=0.25,angle=0]{figures/intra-container-ftB.pdf}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.42\textwidth}
-    \caption{EP Class B}
-    \includegraphics[scale=0.25,angle=0]{figures/intra-container-epB.pdf}
-  \end{subfigure}
-\end{figure}
-
-#+END_LaTeX
-
-*** Multi-machine (4 nodes)
-
-- 4 containers per machine
-- Each container configured with 4 cores
-#+BEGIN_LaTeX
-
-\begin{figure}
-  \centering
-  \begin{subfigure}[b]{0.42\textwidth}
-    \caption{LU Class B}
-    \includegraphics[scale=0.25,angle=0]{figures/inter-container-luB.pdf}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.42\textwidth}
-    \caption{EP Class B}
-    \includegraphics[scale=0.25,angle=0]{figures/inter-container-epB.pdf}
-  \end{subfigure}
-\end{figure}
-
-#+END_LaTeX
-
-*** Multi-machine (4 nodes other topology)
-
-- 4 containers per machine
-- Each container configured with 4 cores
-
-#+BEGIN_LaTeX
-
-\begin{figure}
-  \centering
-  \begin{subfigure}[b]{0.42\textwidth}
-    \caption{LU Class B}
-    \includegraphics[scale=0.25,angle=0]{figures/inter-container-topo-luB.pdf}
-    \label{fig:epkernelversion}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.32\textwidth}
-    \caption{EP Class B}
-    \includegraphics[scale=0.25,angle=0]{figures/inter-container-topo-epB.pdf}
-\label{fig:lukernelversion}
-  \end{subfigure}
-\end{figure}
-
-#+END_LaTeX
 * Evaluating HPC runtimes with Distem
 *** HPC runtimes
 
@@ -545,10 +307,9 @@ make possible the evaluation of HPC runtimes:
 - 3 Grid'5000 clusters located in two sites
 
 - Experimental evaluation:
-  - /Failure detection of HPC runtimes/
+  - */Failure detection of HPC runtimes/*
+  - */Evaluation of load balancing strategies in Charm++/*
   - /Validity of fault injection mechanism/
-  - /Evaluation of load balancing strategies in Charm++/
-
 *** Failure detection of HPC runtimes
 
 
@@ -665,6 +426,254 @@ Running Stencil3D using 128 processes in the dynamic platform
 
 #+END_LaTeX
 
+* Distem valildation for HPC applications
+*** Containers
+
+ *Containers* refers generally to *Operating-system-level virtualization*,
+  where the *kernel* of an operating system allows for multiple isolated *user-space instances*.
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.65]{figures/lxc-vm.jpg}
+  \label{fig:hpc}
+\end{figure}
+#+END_LaTeX
+
+*** Implementations
+
+- Chroot
+- Linux-VServer
+- FreeBSD Jails
+- Solaris Containers
+- OpenVZ
+
+*** /namespaces and cgroups/
+
+- Both features incorporated in Linux kernel since 2006 (Linux 2.6.24)
+- Several container solutions: LXC, libvirt, libcontainer, systemd-nspawn, Docker
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+\includegraphics[scale=0.30]{figures/libcontainer-diagram.pdf}
+  \label{fig:hpc}
+\end{figure}
+#+END_LaTeX
+
+# /libcontainer/ *will become the standard to manage containers*
+
+*** Benefits of using containers in HPC                          :noexport:
+
+- Containers allow to easily provision a full software stack.
+  They bring:
+  - portability
+  - user customization
+  - reproducibility of experiments
+
+- Containers provide a lower oversubscription overhead than full vms, enabling:
+  - a better resource utilization
+  - to be used as a building block for large scale platform emulators
+
+
+*** In this task, we answer:
+
+- What is the overhead of oversubscription using different versions of Linux kernel?
+# - What is the performance of inter-container communication?
+- What is the impact of running an HPC workload with several MPI processes inside containers?
+- What is the impact of network technology ?
+
+*** Experimental setup
+
+**** Hardware
+- Cluster in Grid'5000 Testbed where each node is equipped
+  with two Intel Xeon E5-2630v3 processors (with 8 cores each), 128 GB of RAM and a 10 GbE adapter
+- Our experimental setup included up to 64 machines
+
+**** Software
+- Debian Jessie, Linux kernel versions: 3.2, 3.16 and 4.0, OpenMPI and NPB.
+  We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
+
+
+*** Network setup
+
+- *Veth pair + Linux bridge*
+- Veth pair + OpenvSwitch
+- MACVLAN or SR-IOV
+- Phys
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.4]{figures/lxc-veth.pdf}
+  \label{fig:hpc}
+\end{figure}
+#+END_LaTeX
+
+*** Linux kernel version
+
+   32 containers running on: 8,16,32 physical machines.
+
+**** Results                                               :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :BEAMER_env: block
+    :END:
+
+- 2/node
+  - 3.2: *1577.78%*
+  - 3.16: *22.67%*
+  - 4.0: *2.40%*
+- Overhead present in MPI communication
+- Since Linux kernel version *3.11*, *TSO* was enabled in *veth*
+
+
+# What do we observe?
+
+
+# There is a high performance overhead when using Linux kernel older than 3.16
+# We are sure that if we use a kernel higher than 3.16 we are fine, we dont have to worry about.
+# This behavior was observe for almost every benchmark.
+
+# Why do we use 32 machines?
+
+# well, we chose one of example. We start to see performance degradation form 8 nodes.
+# This problems persist and it it even more severe when the number of nodes increases.
+
+# So, it is important to choose a good kernel
+
+
+**** image                                                         :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :END:
+
+
+# *** notes of results						   :noexport:
+
+# This notes explain the results obtained
+
+# The execution with kernel 3.2 of 2 container per node takes 15 times more than native
+# communication time is really degradated, cpu is not affected.
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.32]{figures/execution_time-kernel-cgB.pdf}
+  \label{fig:hpc}
+  \caption{CG.B}
+\end{figure}
+#+END_LaTeX
+
+*** Multinode inter-container communication
+
+- 16 MPI processes were run per physical machine or container
+- We used a maximum of 32 physical machines
+#+BEGIN_LaTeX
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.42\textwidth}
+    \includegraphics[scale=0.25,angle=0]{figures/veth_overhead-tso-ftB.pdf}
+    \caption{FT Class B}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.42\textwidth}
+    \includegraphics[scale=0.25,angle=0]{figures/veth_overhead-tso-cgB.pdf}
+    \caption{CG Class B}
+  \end{subfigure}
+\end{figure}
+
+#+END_LaTeX
+
+*** Interconnection comparison
+
+- *Veth pair + Linux bridge*
+- *Veth pair + OpenvSwitch*
+- *SR-IOV*
+- Using Linux kernel 4.3
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.4]{figures/lxc-veth.pdf}
+  \label{fig:hpc}
+\end{figure}
+#+END_LaTeX
+
+*** SR-IOV explained
+
+- *Veth pair + Linux bridge*
+- *Veth pair + OpenvSwitch*
+- *SR-IOV*
+
+#+BEGIN_LaTeX
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.8]{figures/SR-IOV.pdf}
+\end{figure}
+#+END_LaTeX
+
+*** One machine (intra-node communication)
+- 1 MPI process per container
+- 16 containers in total
+#+BEGIN_LaTeX
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{FT Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/intra-container-ftB.pdf}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{EP Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/intra-container-epB.pdf}
+  \end{subfigure}
+\end{figure}
+
+#+END_LaTeX
+
+*** Multi-machine (4 nodes)
+
+- 4 containers per machine
+- Each container configured with 4 cores
+#+BEGIN_LaTeX
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{LU Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/inter-container-luB.pdf}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{EP Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/inter-container-epB.pdf}
+  \end{subfigure}
+\end{figure}
+
+#+END_LaTeX
+
+*** Multi-machine (4 nodes other topology)
+
+- 4 containers per machine
+- Each container configured with 4 cores
+
+#+BEGIN_LaTeX
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.42\textwidth}
+    \caption{LU Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/inter-container-topo-luB.pdf}
+    \label{fig:epkernelversion}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \caption{EP Class B}
+    \includegraphics[scale=0.25,angle=0]{figures/inter-container-topo-epB.pdf}
+\label{fig:lukernelversion}
+  \end{subfigure}
+\end{figure}
+
+#+END_LaTeX
 * Demo time
 *** Docker
 It's time for a [[https://github.com/alegrand/RR_webinars/blob/master/2_controling_your_environment/docker-tutorial.org][Docker Demo]] (follow the links from
@@ -723,3 +732,14 @@ $ docker tag  d7e5801bb7ac ttimbers/mmp-dyf-skat:latest
 
   + enables experimenters to easily simulate perturbations and
     heterogeneity of nodes
+*** What did we find?
+
+- There is important performance degradation provoked by *veth* for Linux kernels < 3.11
+- Container placing plays in important role under oversubscription
+- Memory bound applications and application that use *all to all MPI* communication are
+  the most affected by oversubscription
+
+*** What is next
+
+ - Adapt Distem to SDN and NDN needs
+ - Integrae Time dilation

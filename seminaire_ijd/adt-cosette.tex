@@ -1,4 +1,4 @@
-% Created 2016-05-23 Mon 17:34
+% Created 2016-05-24 Tue 17:09
 \documentclass[11pt,xcolor=dvipsnames,presentation]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -46,7 +46,7 @@
 \usefonttheme{}
 \useinnertheme{}
 \useoutertheme{}
-\author{Cristian Ruiz}
+\author{Cristian Ruiz \\ \vspace{0.5cm} MADYNES Team}
 \date{May 31, 2016 --  young engineers seminar \mylogos}
 \title{ADT COSETTE}
 \hypersetup{
@@ -84,11 +84,11 @@ A large-scale, shared testbed supporting high-quality,
 reproducible research on distributed systems:
 
 \begin{itemize}
-\item Configurable.
-\item High Performance Computing, Grids, Peer-to-peer systems, Cloud computing.
+\item Highly configurable
+\item High Performance Computing, Grids, Peer-to-peer systems, Cloud computing
 \end{itemize}
 
-Another examples of Testbeds: Chameleon, Cloudlab
+Another examples of testbeds: Chameleon, Cloudlab
 \begin{columns}
 \begin{column}{0.5\textwidth}
 
@@ -162,7 +162,6 @@ so it \alert{matches the experimental conditions you need}\\[1em]
 \end{center}
 \end{frame}
 
-
 \begin{frame}[label=sec-2-0-2]{Distem features}
 The features of Distem include:
 
@@ -183,9 +182,260 @@ Distem uses modern Linux functionality:
 \end{frame}
 
 
-\section{Distem valildation for HPC applications}
+
+\section{Evaluating HPC runtimes with Distem}
 \label{sec-3}
-\begin{frame}[label=sec-3-0-1]{Containers}
+\begin{frame}[label=sec-3-0-1]{HPC runtimes}
+\begin{itemize}
+\item According to the IESP report a strong effort must be made on improving HPC software stacks
+\item One of the main parts of this stack is dedicated to \alert{HPC runtime}
+\item HPC runtime enables the execution, managing and debugging of parallel applications
+\item OpenMPI, Charm++, CUDA, etc.
+\end{itemize}
+
+
+\alert{For this work we focus on studying HPC runtimes}
+
+\vspace{1cm}
+\bottomcitepre{Dongarra, Jack \textit{et Al.},
+  {\textit{The International Exascale Software Project Roadmap}},
+  International Journal of High Performance Computer Applications, 2011}
+\end{frame}
+
+\begin{frame}[label=sec-3-0-2]{Evaluating current HPC runtimes}
+\begin{block}{Several properties to evaluate}
+\begin{itemize}
+\item Programmability
+\item Scalability
+\item \alert{Fault tolerance}
+\item \alert{Load balancing}
+\end{itemize}
+\end{block}
+
+\begin{block}{We focus on}
+\begin{itemize}
+\item Fault tolerance:
+more components $\Rightarrow$ shorter MTBF \newline
+(Mean Time Between Failures)
+
+\item Load balancing: Cloud computing, Green computing, \newline
+  Data centers' policies
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[label=sec-3-0-3]{Evaluating current HPC runtimes}
+\begin{itemize}
+\item Carrying out evaluation under complex realistic conditions is \alert{hard}
+\item Simulator:
+\begin{itemize}
+\item simplified assumptions $\frowny$
+\item lower realism $\frowny$
+\item not possible to run a complete software stack $\frowny$
+\end{itemize}
+
+\item Real platform:
+\begin{itemize}
+\item expensive $\frowny$
+\item lacks of reproducibility $\frowny$
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[label=sec-3-0-4]{In this task}
+We integrated the following improvements in order to
+make possible the evaluation of HPC runtimes:
+
+\begin{itemize}
+\item Evolving experimental conditions
+\item Failure injection framework
+\item Event injection framework
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-3-0-5]{Evolving experimental conditions}
+
+\begin{minipage}{0.5\textwidth}
+\begin{center}
+    \includegraphics[width=0.9\textwidth]{figures/links}
+\end{center}\end{minipage}\hfill
+\begin{minipage}{0.5\textwidth}
+\begin{center}
+    \includegraphics[width=\textwidth]{figures/procs}
+\end{center}\end{minipage}
+
+\begin{itemize}
+\item Heterogeneous conditions can be created: CPU frequencies,
+different IO and network capabilities
+
+\item These features can be updated dynamically
+
+\item This is useful to achieve complex experiments where the platform is modified,
+like it could happened in reality
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-3-0-6]{Failure injection framework}
+
+\begin{itemize}
+\item We take into account failures that provoke a lost of the node (very common failures)
+
+\item Nodes can be lost in three different ways:
+
+\begin{itemize}
+\item \alert{Graceful}: the node is shut down cleanly, using an operating system command
+\item \alert{Soft}: the node is forced to shut down
+\item \alert{Hard}: the node failed abruptly
+\end{itemize}
+
+\item We do not take into account byzantine failures
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-3-0-7]{Event injection framework}
+\begin{itemize}
+\item Increase the reproducibility of experiments
+\item Distem supports the following modifications for a given set of nodes:
+\begin{itemize}
+\item CPU frequency
+\item Network capabilities (latency and bandwidth)
+\item Failures
+\end{itemize}
+\item These modifications can be injected using a deterministic behavior or using
+a probabilistic distribution
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-3-0-8]{Experiment setup}
+\begin{itemize}
+\item We evaluate Charm++, OpenMPI and MPICH runtimes
+\item Charm++: Jacobi3D and Stencil3D
+\item MPI-based runtimes:  NAS parallel benchmarks
+
+\item 3 Grid'5000 clusters located in two sites
+
+\item Experimental evaluation:
+\begin{itemize}
+\item \alert{\emph{Failure detection of HPC runtimes}}
+\item \alert{\emph{Evaluation of load balancing strategies in Charm++}}
+\item \emph{Validity of fault injection mechanism}
+\end{itemize}
+\end{itemize}
+\end{frame}
+\begin{frame}[label=sec-3-0-9]{Failure detection of HPC runtimes}
+\begin{itemize}
+\item We run an application on top of the HPC runtime
+\item We inject different types of faults and observe how the HPC runtime reacts
+\end{itemize}
+
+
+\begin{table}[ht!]
+  { \scriptsize
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{3}{*}{\textbf{Failure}} &
+  \multicolumn{6}{c|}{\textbf{Runtime}}  \\
+  \cline{1-7}
+  &\multicolumn{2}{c}{\textbf{Charm++}}&
+  \multicolumn{2}{|c}{\textbf{OpenMPI}}&
+  \multicolumn{2}{|c|}{\textbf{MPICH}}\\
+  \cline{2-7}
+  &\textbf{Detected} & \textbf{Action} & \textbf{Detected} & \textbf{Action} & \textbf{Detected} & \textbf{Action}  \\
+  \hline
+  \textbf{Graceful}  &   Yes  & C   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
+  \textbf{Soft}  &       Yes  & C   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
+  \textbf{Hard}   &      \color{red}{No}   & -   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
+  \hline
+  \end{tabular}
+  }
+  \caption{Failure detection. C refers to the roll-back of the application to the previous checkpoint,
+  H refers to the fact that processes hang, E refers to the termination of MPI processes}
+  \label{table:assess_HPC_runtimes}
+\end{table}
+\end{frame}
+
+\begin{frame}[label=sec-3-0-10]{Evaluating load balancing strategies in Charm++}
+\begin{itemize}
+\item We create a platform composed 128 vnodes distributed over 8 physical nodes.
+
+\item We experiment with two different scenarios:
+
+\begin{itemize}
+\item \alert{Heterogeneous}: half of the vnodes have a CPU clock reduced to 50 \%
+
+\item \alert{Dynamic}: the available CPU power of a sub-part of the vnodes is dynamic.
+\end{itemize}
+\end{itemize}
+
+
+The event injection framework was used to automate the creation of these scenarios
+\end{frame}
+
+\begin{frame}[label=sec-3-0-11]{Evaluating load balancing strategies in Charm++}
+Running Stencil3D using 128 processes in the heterogeneous platform
+
+\vspace{0.5cm}
+\begin{minipage}{0.30\textwidth}
+\begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous.pdf}
+    \caption{\centering LBOff \newline Walltime: 341 secs}
+    \label{fig:heterogeneous}
+\end{figure}
+    \end{center}\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous_refinelb.pdf}
+   \caption{\centering RefineLB \newline Walltime: 320 secs}
+    \label{fig:refinelbh}
+\end{figure}
+\end{center}\end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous_hybrid}
+    \caption{\centering Hybrid \newline Walltime: 356 secs}
+        \label{fig:hybridlbh}
+\end{figure}
+    \end{center}\end{minipage}
+\end{frame}
+
+\begin{frame}[label=sec-3-0-12]{Evaluating load balancing strategies in Charm++}
+Running Stencil3D using 128 processes in the dynamic platform
+
+\vspace{0.5cm}
+\begin{minipage}{0.30\textwidth}
+\begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic}
+    \caption{\centering LBOff \newline Walltime: 347 secs}
+    \label{fig:heterogeneous}
+\end{figure}
+    \end{center}\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic_refinelb}
+   \caption{\centering RefineLB \newline Walltime: 322 secs}
+    \label{fig:refinelbh}
+\end{figure}
+\end{center}\end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+    \begin{center}
+\begin{figure}
+    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic_hybrid}
+    \caption{\centering Hybrid \newline Walltime: 359 secs}
+        \label{fig:hybridlbh}
+\end{figure}
+    \end{center}\end{minipage}
+\end{frame}
+
+\section{Distem valildation for HPC applications}
+\label{sec-4}
+\begin{frame}[label=sec-4-0-1]{Containers}
 \alert{Containers} refers generally to \alert{Operating-system-level virtualization},
  where the \alert{kernel} of an operating system allows for multiple isolated \alert{user-space instances}.
 
@@ -196,17 +446,7 @@ Distem uses modern Linux functionality:
 \end{figure}
 \end{frame}
 
-\begin{frame}[label=sec-3-0-2]{Implementations}
-\begin{itemize}
-\item Chroot
-\item Linux-VServer
-\item FreeBSD Jails
-\item Solaris Containers
-\item OpenVZ
-\end{itemize}
-\end{frame}
-
-\begin{frame}[label=sec-3-0-3]{\emph{namespaces and cgroups}}
+\begin{frame}[label=sec-4-0-2]{\emph{namespaces and cgroups}}
 \begin{itemize}
 \item Both features incorporated in Linux kernel since 2006 (Linux 2.6.24)
 \item Several container solutions: LXC, libvirt, libcontainer, systemd-nspawn, Docker
@@ -219,35 +459,17 @@ Distem uses modern Linux functionality:
 \end{figure}
 \end{frame}
 
-\begin{frame}[label=sec-3-0-4]{Benefits of using containers in HPC}
-\begin{itemize}
-\item Containers allow to easily provision a full software stack.
-They bring:
-\begin{itemize}
-\item portability
-\item user customization
-\item reproducibility of experiments
-\end{itemize}
-
-\item Containers provide a lower oversubscription overhead than full vms, enabling:
-\begin{itemize}
-\item a better resource utilization
-\item to be used as a building block for large scale platform emulators
-\end{itemize}
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}[label=sec-3-0-5]{In this task, we answer:}
+\begin{frame}[label=sec-4-0-3]{In this task, we answer:}
 \begin{itemize}
 \item What is the overhead of oversubscription using different versions of Linux kernel?
-\item What is the performance of inter-container communication?
+\end{itemize}
+\begin{itemize}
 \item What is the impact of running an HPC workload with several MPI processes inside containers?
 \item What is the impact of network technology ?
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label=sec-3-0-6]{Experimental setup}
+\begin{frame}[label=sec-4-0-4]{Experimental setup}
 \begin{block}{Hardware}
 \begin{itemize}
 \item Cluster in Grid'5000 Testbed where each node is equipped
@@ -265,7 +487,7 @@ We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
 \end{frame}
 
 
-\begin{frame}[label=sec-3-0-7]{Network setup}
+\begin{frame}[label=sec-4-0-5]{Network setup}
 \begin{itemize}
 \item \alert{Veth pair + Linux bridge}
 \item Veth pair + OpenvSwitch
@@ -280,7 +502,7 @@ We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
 \end{figure}
 \end{frame}
 
-\begin{frame}[label=sec-3-0-8]{Linux kernel version}
+\begin{frame}[label=sec-4-0-6]{Linux kernel version}
 32 containers running on: 8,16,32 physical machines.
 
 \begin{columns}
@@ -317,7 +539,7 @@ We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
 \end{columns}
 \end{frame}
 
-\begin{frame}[label=sec-3-0-9]{Multinode inter-container communication}
+\begin{frame}[label=sec-4-0-7]{Multinode inter-container communication}
 \begin{itemize}
 \item 16 MPI processes were run per physical machine or container
 \item We used a maximum of 32 physical machines
@@ -336,7 +558,7 @@ We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
 \end{figure}
 \end{frame}
 
-\begin{frame}[label=sec-3-0-10]{Interconnection comparison}
+\begin{frame}[label=sec-4-0-8]{Interconnection comparison}
 \begin{itemize}
 \item \alert{Veth pair + Linux bridge}
 \item \alert{Veth pair + OpenvSwitch}
@@ -351,7 +573,20 @@ We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
 \end{figure}
 \end{frame}
 
-\begin{frame}[label=sec-3-0-11]{One machine (intra-node communication)}
+\begin{frame}[label=sec-4-0-9]{SR-IOV explained}
+\begin{itemize}
+\item \alert{Veth pair + Linux bridge}
+\item \alert{Veth pair + OpenvSwitch}
+\item \alert{SR-IOV}
+\end{itemize}
+
+\begin{figure}[!h]
+  \center
+  \includegraphics[scale=0.8]{figures/SR-IOV.pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}[label=sec-4-0-10]{One machine (intra-node communication)}
 \begin{itemize}
 \item 1 MPI process per container
 \item 16 containers in total
@@ -370,7 +605,7 @@ We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
 \end{figure}
 \end{frame}
 
-\begin{frame}[label=sec-3-0-12]{Multi-machine (4 nodes)}
+\begin{frame}[label=sec-4-0-11]{Multi-machine (4 nodes)}
 \begin{itemize}
 \item 4 containers per machine
 \item Each container configured with 4 cores
@@ -389,7 +624,7 @@ We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
 \end{figure}
 \end{frame}
 
-\begin{frame}[label=sec-3-0-13]{Multi-machine (4 nodes other topology)}
+\begin{frame}[label=sec-4-0-12]{Multi-machine (4 nodes other topology)}
 \begin{itemize}
 \item 4 containers per machine
 \item Each container configured with 4 cores
@@ -410,257 +645,6 @@ We instrumented the benchmarks: LU, EP, CG, MG, FT, IS using TAU
   \end{subfigure}
 \end{figure}
 \end{frame}
-\section{Evaluating HPC runtimes with Distem}
-\label{sec-4}
-\begin{frame}[label=sec-4-0-1]{HPC runtimes}
-\begin{itemize}
-\item According to the IESP report a strong effort must be made on improving HPC software stacks
-\item One of the main parts of this stack is dedicated to \alert{HPC runtime}
-\item HPC runtime enables the execution, managing and debugging of parallel applications
-\item OpenMPI, Charm++, CUDA, etc.
-\end{itemize}
-
-
-\alert{For this work we focus on studying HPC runtimes}
-
-\vspace{1cm}
-\bottomcitepre{Dongarra, Jack \textit{et Al.},
-  {\textit{The International Exascale Software Project Roadmap}},
-  International Journal of High Performance Computer Applications, 2011}
-\end{frame}
-
-\begin{frame}[label=sec-4-0-2]{Evaluating current HPC runtimes}
-\begin{block}{Several properties to evaluate}
-\begin{itemize}
-\item Programmability
-\item Scalability
-\item \alert{Fault tolerance}
-\item \alert{Load balancing}
-\end{itemize}
-\end{block}
-
-\begin{block}{We focus on}
-\begin{itemize}
-\item Fault tolerance:
-more components $\Rightarrow$ shorter MTBF \newline
-(Mean Time Between Failures)
-
-\item Load balancing: Cloud computing, Green computing, \newline
-  Data centers' policies
-\end{itemize}
-\end{block}
-\end{frame}
-
-
-\begin{frame}[label=sec-4-0-3]{Evaluating current HPC runtimes}
-\begin{itemize}
-\item Carrying out evaluation under complex realistic conditions is \alert{hard}
-\item Simulator:
-\begin{itemize}
-\item simplified assumptions $\frowny$
-\item lower realism $\frowny$
-\item not possible to run a complete software stack $\frowny$
-\end{itemize}
-
-\item Real platform:
-\begin{itemize}
-\item expensive $\frowny$
-\item lacks of reproducibility $\frowny$
-\end{itemize}
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}[label=sec-4-0-4]{In this task}
-We integrated the following improvements in order to
-make possible the evaluation of HPC runtimes:
-
-\begin{itemize}
-\item Evolving experimental conditions
-\item Failure injection framework
-\item Event injection framework
-\end{itemize}
-\end{frame}
-
-\begin{frame}[label=sec-4-0-5]{Evolving experimental conditions}
-
-\begin{minipage}{0.5\textwidth}
-\begin{center}
-    \includegraphics[width=0.9\textwidth]{figures/links}
-\end{center}\end{minipage}\hfill
-\begin{minipage}{0.5\textwidth}
-\begin{center}
-    \includegraphics[width=\textwidth]{figures/procs}
-\end{center}\end{minipage}
-
-\begin{itemize}
-\item Heterogeneous conditions can be created: CPU frequencies,
-different IO and network capabilities
-
-\item These features can be updated dynamically
-
-\item This is useful to achieve complex experiments where the platform is modified,
-like it could happened in reality
-\end{itemize}
-\end{frame}
-
-\begin{frame}[label=sec-4-0-6]{Failure injection framework}
-
-\begin{itemize}
-\item We take into account failures that provoke a lost of the node (very common failures)
-
-\item Nodes can be lost in three different ways:
-
-\begin{itemize}
-\item \alert{Graceful}: the node is shut down cleanly, using an operating system command
-\item \alert{Soft}: the node is forced to shut down
-\item \alert{Hard}: the node failed abruptly
-\end{itemize}
-
-\item We do not take into account byzantine failures
-\end{itemize}
-\end{frame}
-
-\begin{frame}[label=sec-4-0-7]{Event injection framework}
-\begin{itemize}
-\item Increase the reproducibility of experiments
-\item Distem supports the following modifications for a given set of nodes:
-\begin{itemize}
-\item CPU frequency
-\item Network capabilities (latency and bandwidth)
-\item Failures
-\end{itemize}
-\item These modifications can be injected using a deterministic behavior or using
-a probabilistic distribution
-\end{itemize}
-\end{frame}
-
-\begin{frame}[label=sec-4-0-8]{Experiment setup}
-\begin{itemize}
-\item We evaluate Charm++, OpenMPI and MPICH runtimes
-\item Charm++: Jacobi3D and Stencil3D
-\item MPI-based runtimes:  NAS parallel benchmarks
-
-\item 3 Grid'5000 clusters located in two sites
-
-\item Experimental evaluation:
-\begin{itemize}
-\item \emph{Failure detection of HPC runtimes}
-\item \emph{Validity of fault injection mechanism}
-\item \emph{Evaluation of load balancing strategies in Charm++}
-\end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[label=sec-4-0-9]{Failure detection of HPC runtimes}
-\begin{itemize}
-\item We run an application on top of the HPC runtime
-\item We inject different types of faults and observe how the HPC runtime reacts
-\end{itemize}
-
-
-\begin{table}[ht!]
-  { \scriptsize
-  \begin{tabular}{|c|c|c|c|c|c|c|}
-  \hline
-  \multirow{3}{*}{\textbf{Failure}} &
-  \multicolumn{6}{c|}{\textbf{Runtime}}  \\
-  \cline{1-7}
-  &\multicolumn{2}{c}{\textbf{Charm++}}&
-  \multicolumn{2}{|c}{\textbf{OpenMPI}}&
-  \multicolumn{2}{|c|}{\textbf{MPICH}}\\
-  \cline{2-7}
-  &\textbf{Detected} & \textbf{Action} & \textbf{Detected} & \textbf{Action} & \textbf{Detected} & \textbf{Action}  \\
-  \hline
-  \textbf{Graceful}  &   Yes  & C   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
-  \textbf{Soft}  &       Yes  & C   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
-  \textbf{Hard}   &      \color{red}{No}   & -   &  Yes   &  \color{red}{H}  &  Yes   &  E   \\
-  \hline
-  \end{tabular}
-  }
-  \caption{Failure detection. C refers to the roll-back of the application to the previous checkpoint,
-  H refers to the fact that processes hang, E refers to the termination of MPI processes}
-  \label{table:assess_HPC_runtimes}
-\end{table}
-\end{frame}
-
-\begin{frame}[label=sec-4-0-10]{Evaluating load balancing strategies in Charm++}
-\begin{itemize}
-\item We create a platform composed 128 vnodes distributed over 8 physical nodes.
-
-\item We experiment with two different scenarios:
-
-\begin{itemize}
-\item \alert{Heterogeneous}: half of the vnodes have a CPU clock reduced to 50 \%
-
-\item \alert{Dynamic}: the available CPU power of a sub-part of the vnodes is dynamic.
-\end{itemize}
-\end{itemize}
-
-
-The event injection framework was used to automate the creation of these scenarios
-\end{frame}
-
-\begin{frame}[label=sec-4-0-11]{Evaluating load balancing strategies in Charm++}
-Running Stencil3D using 128 processes in the heterogeneous platform
-
-\vspace{0.5cm}
-\begin{minipage}{0.30\textwidth}
-\begin{center}
-\begin{figure}
-    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous.pdf}
-    \caption{\centering LBOff \newline Walltime: 341 secs}
-    \label{fig:heterogeneous}
-\end{figure}
-    \end{center}\end{minipage}\hfill
-\begin{minipage}{0.3\textwidth}
-    \begin{center}
-\begin{figure}
-    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous_refinelb.pdf}
-   \caption{\centering RefineLB \newline Walltime: 320 secs}
-    \label{fig:refinelbh}
-\end{figure}
-\end{center}\end{minipage}\hfill
-    \begin{minipage}{0.3\textwidth}
-    \begin{center}
-\begin{figure}
-    \includegraphics[scale=0.22,angle=0]{figures/usage-heterogeneous_hybrid}
-    \caption{\centering Hybrid \newline Walltime: 356 secs}
-        \label{fig:hybridlbh}
-\end{figure}
-    \end{center}\end{minipage}
-\end{frame}
-
-\begin{frame}[label=sec-4-0-12]{Evaluating load balancing strategies in Charm++}
-Running Stencil3D using 128 processes in the dynamic platform
-
-\vspace{0.5cm}
-\begin{minipage}{0.30\textwidth}
-\begin{center}
-\begin{figure}
-    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic}
-    \caption{\centering LBOff \newline Walltime: 347 secs}
-    \label{fig:heterogeneous}
-\end{figure}
-    \end{center}\end{minipage}\hfill
-\begin{minipage}{0.3\textwidth}
-    \begin{center}
-\begin{figure}
-    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic_refinelb}
-   \caption{\centering RefineLB \newline Walltime: 322 secs}
-    \label{fig:refinelbh}
-\end{figure}
-\end{center}\end{minipage}\hfill
-    \begin{minipage}{0.3\textwidth}
-    \begin{center}
-\begin{figure}
-    \includegraphics[scale=0.22,angle=0]{figures/usage-dynamic_hybrid}
-    \caption{\centering Hybrid \newline Walltime: 359 secs}
-        \label{fig:hybridlbh}
-\end{figure}
-    \end{center}\end{minipage}
-\end{frame}
-
 \section{Demo time}
 \label{sec-5}
 \begin{frame}[label=sec-5-0-1]{Docker}
@@ -713,7 +697,6 @@ $ docker tag  d7e5801bb7ac ttimbers/mmp-dyf-skat:latest
 
 \section{Conclusions}
 \label{sec-6}
-
 \begin{frame}[label=sec-6-0-1]{Conclusions}
 \begin{itemize}
 \item Being able to execute experiments on a large set of platform
@@ -733,6 +716,21 @@ failure handling for widely used HPC runtimes
 \item enables experimenters to easily simulate perturbations and
 heterogeneity of nodes
 \end{itemize}
+\end{itemize}
+\end{frame}
+\begin{frame}[label=sec-6-0-2]{What did we find?}
+\begin{itemize}
+\item There is important performance degradation provoked by \alert{veth} for Linux kernels < 3.11
+\item Container placing plays in important role under oversubscription
+\item Memory bound applications and application that use \alert{all to all MPI} communication are
+the most affected by oversubscription
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-6-0-3]{What is next}
+\begin{itemize}
+\item Adapt Distem to SDN and NDN needs
+\item Integrate: \emph{time dilation}
 \end{itemize}
 \end{frame}
 % Emacs 24.3.1 (Org mode 8.2.10)
