@@ -1,7 +1,7 @@
 #+TITLE: ADT COSETTE
 #+AUTHOR: Cristian Ruiz
 #+EMAIL:     {Cristian.Ruiz}@inria.fr
-#+DATE: May 31, 2016 -- engineers seminar \mylogos
+#+DATE: May 31, 2016 --  young engineers seminar \mylogos
 
 #+STARTUP: beamer overview indent
 
@@ -409,7 +409,75 @@ Distem uses modern Linux functionality:
 \end{figure}
 
 #+END_LaTeX
-* Distem experimental conditions
+* Evaluating HPC runtimes with Distem
+*** HPC runtimes
+
+- According to the IESP report a strong effort must be made on improving HPC software stacks
+- One of the main parts of this stack is dedicated to *HPC runtime*
+- HPC runtime enables the execution, managing and debugging of parallel applications
+- OpenMPI, Charm++, CUDA, etc.
+
+
+ *For this work we focus on studying HPC runtimes*
+
+\vspace{1cm}
+#+BEGIN_LaTeX
+  \bottomcitepre{Dongarra, Jack \textit{et Al.},
+    {\textit{The International Exascale Software Project Roadmap}},
+    International Journal of High Performance Computer Applications, 2011}
+#+END_LaTeX
+
+*** Evaluating current HPC runtimes
+
+**** Several properties to evaluate
+
+  - Programmability
+  - Scalability
+  - *Fault tolerance*
+  - *Load balancing*
+
+**** We focus on
+
+- Fault tolerance:
+  more components $\Rightarrow$ shorter MTBF \newline
+  (Mean Time Between Failures)
+
+- Load balancing: Cloud computing, Green computing, \newline
+  Data centers' policies
+
+#  reduction of CPU frequencies in the presence of excessive heat, etc.
+
+# - Experimentation is essential in this context.
+
+# This has to have a logic sequence
+
+# Why we evaluate HPC runtimes, why it is necessary to evalute load balancing and fault tolerance
+
+# Study of a central part of HPC software stack => the HPC runtime
+
+# big infrastructures => more probability of failures
+
+# more nodes => Shorter MTBF (Mean Time between failures)
+
+
+*** Evaluating current HPC runtimes
+
+- Carrying out evaluation under complex realistic conditions is *hard*
+- Simulator:
+   - simplified assumptions $\frowny$
+   - lower realism $\frowny$
+   - not possible to run a complete software stack $\frowny$
+
+- Real platform:
+   - expensive $\frowny$
+   - lacks of reproducibility $\frowny$
+
+# Here I will describe the related work,
+# why it is difficult to evalute HPC runtime in
+# real conditions and I can then present
+# our solution for this problem.
+
+
 *** In this task
 
 We integrated the following improvements in order to
@@ -597,9 +665,49 @@ Running Stencil3D using 128 processes in the dynamic platform
 
 #+END_LaTeX
 
+* Demo time
+*** Docker
+It's time for a [[https://github.com/alegrand/RR_webinars/blob/master/2_controling_your_environment/docker-tutorial.org][Docker Demo]] (follow the links from
+https://github.com/alegrand/RR_webinars/)
+
+Docker advantages for reproducible research:
+
+- Integrating into local development environments
+- Modular reuse
+- Portable environments
+- Public repositories for sharing
+- Versioning
+
+#+BEGIN_LaTeX
+  \bottomcite{Carl Boettiger,
+     \href{http://www.carlboettiger.info/assets/files/pubs/10.1145/2723872.2723882.pdf}{\textit{An introduction to Docker for reproducible research}},
+    ACM SIGOPS Operating Systems Review,2015}
+#+END_LaTeX
+
+*** Docker advantages
+
+- Portable computation & sharing
+
+#+BEGIN_SRC sh
+ $ docker export container-name > container.tar
+ $ docker push username/r-recommended
+#+END_SRC
+
+- Re-usable modules
+#+BEGIN_SRC sh
+$ docker run -d --name db training/postgres
+$ docker run -d -P --link db:bd training/webapp \
+   python app.py
+#+END_SRC
+
+- Versioning
+
+#+BEGIN_SRC sh
+$ docker history r-base
+$ docker tag  d7e5801bb7ac ttimbers/mmp-dyf-skat:latest
+#+END_SRC
 
 * Conclusions
-
 *** Conclusions
 
 - Being able to execute experiments on a large set of platform
