@@ -440,7 +440,7 @@ Running Stencil3D using 128 processes in the dynamic platform
 \end{figure}
 #+END_LaTeX
 
-*** Implementations
+*** Implementations                                              :noexport:
 
 - Chroot
 - Linux-VServer
@@ -742,4 +742,4 @@ $ docker tag  d7e5801bb7ac ttimbers/mmp-dyf-skat:latest
 *** What is next
 
  - Adapt Distem to SDN and NDN needs
- - Integrae Time dilation
+ - Integrate: /time dilation/
