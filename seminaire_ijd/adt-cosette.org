@@ -611,10 +611,9 @@ Running Stencil3D using 128 processes in the dynamic platform
 #+END_LaTeX
 
 *** What did we find?
-- Using one machine there is a significant overhead of SR-IOV
-- Multi-machine setups results varies from benchmark to benchmark
+- Communication of containers in the same machine are really affected using SR-IOV
+- Multi-machine setups results varies from benchmark to benchmark,
   there is no significant improvement of using SR-IOV
-- Communication of container in the same machine are really affected using SR-IOV
 - OpenVSwitch presents the best performance
 
 *** Multi-machine (4 nodes other topology)                       :noexport:
