@@ -426,7 +426,7 @@ Running Stencil3D using 128 processes in the dynamic platform
 
 #+END_LaTeX
 
-* Distem valildation for HPC applications
+* Distem validation for HPC applications
 *** Containers
 
  *Containers* refers generally to *Operating-system-level virtualization*,
@@ -510,62 +510,20 @@ Running Stencil3D using 128 processes in the dynamic platform
 \end{figure}
 #+END_LaTeX
 
-*** Linux kernel version
-
-   32 containers running on: 8,16,32 physical machines.
-
-**** Results                                               :B_block:BMCOL:
-    :PROPERTIES:
-    :BEAMER_col: 0.5
-    :BEAMER_env: block
-    :END:
-
-- 2/node
-  - 3.2: *1577.78%*
-  - 3.16: *22.67%*
-  - 4.0: *2.40%*
+*** What did we find?
+- There is important performance degradation provoked by veth for
+  Linux kernels < 3.11. Running 2 containers per physical machine:
+   - 3.2: *1577.78%*
+   - 3.16: *22.67%*
+   - 4.0: *2.40%*
 - Overhead present in MPI communication
 - Since Linux kernel version *3.11*, *TSO* was enabled in *veth*
+- Memory bound applications and application that use all to all MPI communication
+  are the most affected by oversubscription
+- Performance issues can appear only at certain scale (e.g. *180%* overhead with 128 MPI processes for CG benchmark).
 
 
-# What do we observe?
-
-
-# There is a high performance overhead when using Linux kernel older than 3.16
-# We are sure that if we use a kernel higher than 3.16 we are fine, we dont have to worry about.
-# This behavior was observe for almost every benchmark.
-
-# Why do we use 32 machines?
-
-# well, we chose one of example. We start to see performance degradation form 8 nodes.
-# This problems persist and it it even more severe when the number of nodes increases.
-
-# So, it is important to choose a good kernel
-
-
-**** image                                                         :BMCOL:
-    :PROPERTIES:
-    :BEAMER_col: 0.5
-    :END:
-
-
-# *** notes of results						   :noexport:
-
-# This notes explain the results obtained
-
-# The execution with kernel 3.2 of 2 container per node takes 15 times more than native
-# communication time is really degradated, cpu is not affected.
-
-#+BEGIN_LaTeX
-\begin{figure}[!h]
-  \center
-  \includegraphics[scale=0.32]{figures/execution_time-kernel-cgB.pdf}
-  \label{fig:hpc}
-  \caption{CG.B}
-\end{figure}
-#+END_LaTeX
-
-*** Multinode inter-container communication
+*** Multinode inter-container communication                      :noexport:
 
 - 16 MPI processes were run per physical machine or container
 - We used a maximum of 32 physical machines
@@ -613,7 +571,7 @@ Running Stencil3D using 128 processes in the dynamic platform
 \end{figure}
 #+END_LaTeX
 
-*** One machine (intra-node communication)
+*** One machine (intra-node communication)                       :noexport:
 - 1 MPI process per container
 - 16 containers in total
 #+BEGIN_LaTeX
@@ -652,7 +610,14 @@ Running Stencil3D using 128 processes in the dynamic platform
 
 #+END_LaTeX
 
-*** Multi-machine (4 nodes other topology)
+*** What did we find?
+- Using one machine there is a significant overhead of SR-IOV
+- Multi-machine setups results varies from benchmark to benchmark
+  there is no significant improvement of using SR-IOV
+- Communication of container in the same machine are really affected using SR-IOV
+- OpenVSwitch presents the best performance
+
+*** Multi-machine (4 nodes other topology)                       :noexport:
 
 - 4 containers per machine
 - Each container configured with 4 cores
@@ -674,7 +639,7 @@ Running Stencil3D using 128 processes in the dynamic platform
 \end{figure}
 
 #+END_LaTeX
-* Demo time
+* Demo time                                                        :noexport:
 *** Docker
 It's time for a [[https://github.com/alegrand/RR_webinars/blob/master/2_controling_your_environment/docker-tutorial.org][Docker Demo]] (follow the links from
 https://github.com/alegrand/RR_webinars/)
@@ -735,11 +700,14 @@ $ docker tag  d7e5801bb7ac ttimbers/mmp-dyf-skat:latest
 *** What did we find?
 
 - There is important performance degradation provoked by *veth* for Linux kernels < 3.11
-- Container placing plays in important role under oversubscription
+- Container placing plays an important role under oversubscription
 - Memory bound applications and application that use *all to all MPI* communication are
   the most affected by oversubscription
+- More details about the results:
 
-*** What is next
-
- - Adapt Distem to SDN and NDN needs
- - Integrate: /time dilation/
+#+BEGIN_LaTeX
+  \bottomcite{Cristian Ruiz \textit{et Al.},
+     \href{https://hal.inria.fr/hal-01195549/document}
+{\textit{Performance Evaluation of Containers for HPC}},11th Workshop on Virtualization in High-Performance Cloud Computing,
+    Vienna, Austria,2015}
+#+END_LaTeX
